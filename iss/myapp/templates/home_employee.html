@@ -1,0 +1,32 @@
+{% extends 'home_base.html' %}
+
+{% block content %}
+
+<h1>Welcome, {{ user.name }}!</h1>
+<p>This is your dashboard as a employee.</p>
+
+<h2>Search for Documents by National Number</h2>
+  
+<!-- Search Form -->
+<form method="GET">
+  {{ search_form.as_p }}
+  <button type="submit">Search</button>
+</form>
+
+{% if documents %}
+  <h3>Documents Found:</h3>
+  <ul>
+    {% for document in documents %}
+      <li>
+        <strong>{{ document.name }}</strong><br>
+        User: {{ document.user.name }}<br>
+        File: <a href="{{ document.file.url }}" target="_blank">Download</a><br>
+        Uploaded on: {{ document.uploaded_at }}
+      </li>
+    {% endfor %}
+  </ul>
+{% elif documents is not None %}
+  <p>No documents found for this national number.</p>
+{% endif %}
+  
+{% endblock content %}

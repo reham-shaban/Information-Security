@@ -1,0 +1,28 @@
+{% extends 'home_base.html' %}
+
+{% block content %}
+
+<h1>Welcome, {{ user.name }}!</h1>
+<p>This is your dashboard as a user.</p>
+
+<h2>Your Documents</h2>
+<ul>
+    {% for document in documents %}
+        <li>
+            <a href="{{ document.file.url }}" target="_blank">{{ document.name }}</a>
+            (Uploaded on {{ document.uploaded_at }})
+        </li>
+    {% empty %}
+        <p>No documents uploaded yet.</p>
+    {% endfor %}
+</ul>
+
+<h2>Upload a New Document</h2>
+<form method="post" enctype="multipart/form-data" action="{% url 'upload_document' %}">
+    {% csrf_token %}
+    {{ upload_form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+
+
+{% endblock content %}
