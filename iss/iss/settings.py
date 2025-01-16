@@ -15,6 +15,23 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Certificate and Key Paths
+# ------ certificates ------
+SERVER_CERT_PATH = BASE_DIR / 'myapp' / 'certificates' / 'server_cert.pem'
+CA_CERT_PATH = BASE_DIR / 'myapp' / 'certificates' / 'ca_cert.pem'
+
+# ------ CA KEYS ------
+CA_KEY_PATH = BASE_DIR / 'myapp' / 'ca_keys' / 'ca_key.pem'
+CA_PUBLIC_KEY_PATH = BASE_DIR / 'myapp' / 'ca_keys' / 'ca_public_key.pem'
+
+# ------ SERVER KEYS ------
+SERVER_ENCRYPTION_KEY_PATH = BASE_DIR / 'myapp' / 'server_keys' / 'server_encryption_key.pem'
+SERVER_SIGNING_KEY_PATH = BASE_DIR / 'myapp' / 'servre_keys' / 'server_signing_key.pem'
+
+SERVER_ENCRYPTION_PUBLIC_KEY_PATH = BASE_DIR / 'myapp' / 'server_keys' / 'server_signing_public_key.pem'
+SERVER_SIGNING_PUBLIC_KEY_PATH = BASE_DIR / 'myapp' / 'server_keys' / 'server_signing_public_key.pem'
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
