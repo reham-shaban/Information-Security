@@ -31,6 +31,11 @@ SERVER_SIGNING_KEY_PATH = BASE_DIR / 'myapp' / 'servre_keys' / 'server_signing_k
 SERVER_ENCRYPTION_PUBLIC_KEY_PATH = BASE_DIR / 'myapp' / 'server_keys' / 'server_signing_public_key.pem'
 SERVER_SIGNING_PUBLIC_KEY_PATH = BASE_DIR / 'myapp' / 'server_keys' / 'server_signing_public_key.pem'
 
+SERVER_PUBLIC_KEY = BASE_DIR / 'myapp' / 'keys' / 'server_public_key.pem'
+SERVER_PRIVATE_KEY = BASE_DIR / 'myapp' / 'keys' / 'server_private_key.pem'
+
+CLIENT_PUBLIC_KEY = BASE_DIR / 'myapp' / 'keys' / 'client_public_key.pem'
+CLIENT_PRIVATE_KEY = BASE_DIR / 'myapp' / 'keys' / 'client_private_key.pem'
 
 
 # Quick-start development settings - unsuitable for production

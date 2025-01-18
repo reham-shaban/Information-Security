@@ -7,8 +7,7 @@ from cryptography import x509
 import datetime
 from django.apps import AppConfig
 from iss import settings
-CA_PASSPHRASE = os.getenv('CA_PASSPHRASE', 'NOT_SET')
-print(f"[DEBUG] CA_PASSPHRASE: {CA_PASSPHRASE}")
+
 class YourAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'myapp'
@@ -53,15 +52,10 @@ class YourAppConfig(AppConfig):
                 key_size=2048,
             )
 
-            # Get the CA passphrase from environment variables
-            ca_passphrase = os.getenv("CA_PASSPHRASE")
-            if not ca_passphrase:
-                raise ValueError("CA_PASSPHRASE environment variable is not set.")
-
             self.save_pem_file(ca_key_path, ca_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.BestAvailableEncryption(ca_passphrase.encode()),
+                encryption_algorithm=serialization.NoEncryption(),
             ), "CA private key")
 
             print("[DEBUG] Generating CA self-signed certificate...")
@@ -111,15 +105,10 @@ class YourAppConfig(AppConfig):
                 key_size=2048,
             )
 
-            # Get the server passphrase from environment variables
-            server_passphrase = os.getenv("SERVER_PASSPHRASE")
-            if not server_passphrase:
-                raise ValueError("SERVER_PASSPHRASE environment variable is not set.")
-
             self.save_pem_file(signing_key_path, signing_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.BestAvailableEncryption(server_passphrase.encode()),
+                encryption_algorithm=serialization.NoEncryption(),
             ), "server signing private key")
 
             self.save_public_key(signing_public_key_path, signing_key.public_key(), "server signing public key")
@@ -127,7 +116,7 @@ class YourAppConfig(AppConfig):
             self.save_pem_file(encryption_key_path, encryption_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.BestAvailableEncryption(server_passphrase.encode()),
+                encryption_algorithm=serialization.NoEncryption(),
             ), "server encryption private key")
 
             self.save_public_key(encryption_public_key_path, encryption_key.public_key(), "server encryption public key")
@@ -169,10 +158,7 @@ class YourAppConfig(AppConfig):
 
     def load_ca_files(self, ca_key_path, ca_cert_path):
         with open(ca_key_path, "rb") as f:
-            ca_passphrase = os.getenv("CA_PASSPHRASE")
-            if not ca_passphrase:
-                raise ValueError("CA_PASSPHRASE environment variable is not set.")
-            ca_key = serialization.load_pem_private_key(f.read(), password=ca_passphrase.encode())
+            ca_key = serialization.load_pem_private_key(f.read(), password=None)
         with open(ca_cert_path, "rb") as f:
             ca_cert = x509.load_pem_x509_certificate(f.read())
         return ca_key, ca_cert

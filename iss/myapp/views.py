@@ -133,8 +133,8 @@ class DocumentUploadView(LoginRequiredMixin, CreateView):
             ef.write(iv + encrypted_data)  # Save IV with encrypted data
 
         # Generate RSA keys
-        server_private_key, server_public_key = self.generate_key_pair('server_private_key.pem', 'server_public_key.pem')
-        client_private_key, client_public_key = self.generate_key_pair('client_private_key.pem', 'client_public_key.pem')
+        server_private_key, server_public_key = self.generate_key_pair(settings.SERVER_PRIVATE_KEY, settings.SERVER_PUBLIC_KEY)
+        client_private_key, client_public_key = self.generate_key_pair(settings.CLIENT_PRIVATE_KEY, settings.CLIENT_PUBLIC_KEY)
 
         # Encrypt symmetric key using the generated RSA public key
         encrypted_symmetric_key = server_public_key.encrypt(
@@ -150,23 +150,23 @@ class DocumentUploadView(LoginRequiredMixin, CreateView):
 
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        # # Get the document instance from the form
-        # document_instance = form.save(commit=False)
+        #form.instance.user = self.request.user
+        # Get the document instance from the form
+        document_instance = form.save(commit=False)
         
-        # # Associate the document with the logged-in user
-        # document_instance.user = self.request.user
+        # Associate the document with the logged-in user
+        document_instance.user = self.request.user
 
-        # # Sign the document with a digital signature
-        # signed_document = self.sign_document(document_instance)
+        # Sign the document with a digital signature
+        signed_document = self.sign_document(document_instance)
         
-        # # Attach the signed document to the instance
-        # document_instance.signed_document = signed_document
-        # document_instance.save()
+        # Attach the signed document to the instance
+        document_instance.signed_document = signed_document
+        document_instance.save()
 
-        # # Log debug information
-        # print(f"Document uploaded successfully by user {self.request.user.name}.")
-        # print(f"Document signed with digital signature: {signed_document.hex()}")
+        # Log debug information
+        print(f"Document uploaded successfully by user {self.request.user.name}.")
+        print(f"Document signed with digital signature: {signed_document.hex()}")
 
         # Encrypt the uploaded file
         uploaded_file = form.cleaned_data['file']  # Access the uploaded file
@@ -175,7 +175,7 @@ class DocumentUploadView(LoginRequiredMixin, CreateView):
         )
 
         # Decrypt the encrypted file and get the decrypted file path
-        decrypted_file_path = decrypt_file(encrypted_file_path, encrypted_symmetric_key, 'server_private_key.pem')
+        decrypted_file_path = decrypt_file(encrypted_file_path, encrypted_symmetric_key, settings.SERVER_PRIVATE_KEY)
 
         # Delete the encrypted file after decryption
         os.remove(encrypted_file_path)

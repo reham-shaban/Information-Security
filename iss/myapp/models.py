@@ -61,8 +61,8 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):
         # Prevent updating  after creation
-        if self.pk is not None:  # Check if the object already exists (i.e., is being updated)
-            raise ValueError("This record cannot be edited after creation.")
+        # if self.pk is not None:  # Check if the object already exists (i.e., is being updated)
+        #     raise ValueError("This record cannot be edited after creation.")
 
         # Save the instance first to ensure `self.file.path` is available
         super().save(*args, **kwargs)
