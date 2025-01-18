@@ -55,9 +55,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'csp',
 ]
 
 MIDDLEWARE = [
+    'csp.middleware.CSPMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -151,3 +153,10 @@ AUTH_USER_MODEL = 'myapp.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# إعدادات CSP
+CSP_DEFAULT_SRC = ["'self'"]  # السماح بتحميل الموارد من نفس النطاق فقط
+CSP_SCRIPT_SRC = ["'self'"]   # السماح فقط بالسكربتات من نفس النطاق
+CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]  # السماح بـ CSS الداخلي فقط (غير مستحسن)
+CSP_IMG_SRC = ["'self'", "data:"]  # السماح بالصور من نفس النطاق ومن URIs المشفرة

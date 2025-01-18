@@ -1,5 +1,8 @@
+import hashlib
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+
+from myapp.validators import validate_file_extension, virus_scan, validate_file_size, check_suspicious_filename
 
 # User Model
 class CustomUserManager(BaseUserManager):
@@ -49,8 +52,40 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Document(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='documents')
     name = models.CharField(max_length=255)
-    file = models.FileField(upload_to='documents/')
+    file = models.FileField(upload_to='documents/', validators=[validate_file_extension, virus_scan, validate_file_size, check_suspicious_filename])
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    file_hash = models.CharField(max_length=64, blank=True, null=True)
+
+    #encrypted_key = models.BinaryField(null=True)  # Store the encrypted symmetric key
+
+    def save(self, *args, **kwargs):
+        # Prevent updating  after creation
+        if self.pk is not None:  # Check if the object already exists (i.e., is being updated)
+            raise ValueError("This record cannot be edited after creation.")
+
+        # Save the instance first to ensure `self.file.path` is available
+        super().save(*args, **kwargs)
+
+        # Generate and save the file hash if it doesn't exist
+        if self.file and not self.file_hash:
+            self.file_hash = self.generate_file_hash(self.file.path)
+            # Save the hash back to the database
+            super().save(update_fields=['file_hash'])
+
+    @staticmethod
+    def generate_file_hash(file_path):
+        """
+        Generate a SHA-256 hash for a file.
+        """
+        sha256 = hashlib.sha256()
+        try:
+            with open(file_path, 'rb') as f:
+                while chunk := f.read(8192):  # Read the file in chunks
+                    sha256.update(chunk)
+            return sha256.hexdigest()
+        except FileNotFoundError:
+            return None
 
     def __str__(self):
         return self.name

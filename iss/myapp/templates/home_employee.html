@@ -20,7 +20,7 @@
       <li>
         <strong>{{ document.name }}</strong><br>
         User: {{ document.user.name }}<br>
-        File: <a href="{{ document.file.url }}" target="_blank">Download</a><br>
+        File: <a href="{% url 'download_document' document.pk %}" target="_blank">Download</a><br>
         Uploaded on: {{ document.uploaded_at }}
       </li>
     {% endfor %}
